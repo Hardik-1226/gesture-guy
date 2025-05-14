@@ -5,26 +5,28 @@ import { motion, useAnimation } from "framer-motion"
 import { Hand, ToggleLeft, ToggleRight, Zap, Cpu, Wifi, Settings, Activity } from "lucide-react"
 import { Canvas } from "@react-three/fiber"
 import { OrbitControls } from "@react-three/drei"
-import RoboticHand from "../three-d/robotic-hand"
+import RoboticHand, { type GestureType } from "../three-d/robotic-hand"
 
 export default function SoftwarePreview() {
   const [isSimulating, setIsSimulating] = useState(false)
   const [activeButton, setActiveButton] = useState<string | null>(null)
+  const [activeGesture, setActiveGesture] = useState<GestureType>("idle")
   const containerRef = useRef<HTMLDivElement>(null)
   const handControls = useAnimation()
 
   const dashboardButtons = [
-    { id: "gesture", icon: Hand, label: "Gestures" },
-    { id: "performance", icon: Zap, label: "Performance" },
-    { id: "system", icon: Cpu, label: "System" },
-    { id: "connection", icon: Wifi, label: "Connection" },
-    { id: "settings", icon: Settings, label: "Settings" },
-    { id: "analytics", icon: Activity, label: "Analytics" },
+    { id: "gesture", icon: Hand, label: "Gestures", gesture: "point" as GestureType },
+    { id: "performance", icon: Zap, label: "Performance", gesture: "peace" as GestureType },
+    { id: "system", icon: Cpu, label: "System", gesture: "grab" as GestureType },
+    { id: "connection", icon: Wifi, label: "Connection", gesture: "wave" as GestureType },
+    { id: "settings", icon: Settings, label: "Settings", gesture: "pinch" as GestureType },
+    { id: "analytics", icon: Activity, label: "Analytics", gesture: "thumbsUp" as GestureType },
   ]
 
   useEffect(() => {
     if (!isSimulating) {
       setActiveButton(null)
+      setActiveGesture("idle")
       return
     }
 
@@ -33,6 +35,7 @@ export default function SoftwarePreview() {
     const interval = setInterval(() => {
       const button = dashboardButtons[currentIndex]
       setActiveButton(button.id)
+      setActiveGesture(button.gesture)
       currentIndex = (currentIndex + 1) % dashboardButtons.length
 
       // Get button position
@@ -52,7 +55,7 @@ export default function SoftwarePreview() {
           transition: { type: "spring", stiffness: 100, damping: 15 },
         })
       }
-    }, 2000)
+    }, 3000)
 
     return () => clearInterval(interval)
   }, [isSimulating, handControls])
@@ -117,6 +120,11 @@ export default function SoftwarePreview() {
                         }`}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
+                        onClick={() => {
+                          if (isSimulating) return
+                          setActiveButton(button.id)
+                          setActiveGesture(button.gesture)
+                        }}
                       >
                         <button.icon className="mr-3" size={18} />
                         <span>{button.label}</span>
@@ -132,13 +140,13 @@ export default function SoftwarePreview() {
                     <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
                       <ambientLight intensity={0.5} />
                       <pointLight position={[10, 10, 10]} intensity={1} />
-                      <RoboticHand />
+                      <RoboticHand gestureType={activeGesture} />
                       <OrbitControls enableZoom={false} enablePan={false} />
                     </Canvas>
 
-                    {!isSimulating && (
+                    {!isSimulating && !activeButton && (
                       <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                        <p className="text-gray-400">Start simulation to see gesture tracking</p>
+                        <p className="text-gray-400">Start simulation or select a control to see gesture tracking</p>
                       </div>
                     )}
                   </div>

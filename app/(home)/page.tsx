@@ -4,6 +4,7 @@ import Features from "@/components/sections/features"
 import SoftwarePreview from "@/components/sections/software-preview"
 import Backend from "@/components/sections/backend"
 import BackendConnection from "@/components/sections/backend-connection"
+import GestureAnimations from "@/components/sections/gesture-animations"
 import MusicPlayer from "@/components/sections/music-player"
 import Gallery from "@/components/sections/gallery"
 import Testimonials from "@/components/sections/testimonials"
@@ -19,6 +20,7 @@ export default function Home() {
       <About />
       <Features />
       <SoftwarePreview />
+      <GestureAnimations />
       <Backend />
       <BackendConnection />
       <MusicPlayer />
