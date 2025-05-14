@@ -3,6 +3,9 @@
 import { useState, useRef, useEffect } from "react"
 import { motion, useAnimation } from "framer-motion"
 import { Hand, ToggleLeft, ToggleRight, Zap, Cpu, Wifi, Settings, Activity } from "lucide-react"
+import { Canvas } from "@react-three/fiber"
+import { OrbitControls } from "@react-three/drei"
+import RoboticHand from "../three-d/robotic-hand"
 
 export default function SoftwarePreview() {
   const [isSimulating, setIsSimulating] = useState(false)
@@ -122,39 +125,21 @@ export default function SoftwarePreview() {
                   </div>
                 </div>
 
-                {/* Main Panel */}
+                {/* Main Panel - 3D Visualization */}
                 <div className="col-span-2 bg-black/30 rounded-lg p-4 border border-gray-800 flex flex-col">
                   <h4 className="text-lg font-medium mb-4">Gesture Visualization</h4>
-                  <div className="flex-1 flex items-center justify-center relative">
-                    <div className="w-full h-full flex items-center justify-center">
-                      <div className="text-center">
-                        {isSimulating ? (
-                          <p className="text-primary mb-4">Tracking hand movements...</p>
-                        ) : (
-                          <p className="text-gray-400 mb-4">Start simulation to see gesture tracking</p>
-                        )}
-                        <div className="w-64 h-64 rounded-full border-2 border-dashed border-gray-700 flex items-center justify-center mx-auto">
-                          <div className="w-48 h-48 rounded-full border border-gray-600 flex items-center justify-center">
-                            <div className="w-32 h-32 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center">
-                              <Hand className="text-primary" size={48} />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                  <div className="flex-1 relative">
+                    <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
+                      <ambientLight intensity={0.5} />
+                      <pointLight position={[10, 10, 10]} intensity={1} />
+                      <RoboticHand />
+                      <OrbitControls enableZoom={false} enablePan={false} />
+                    </Canvas>
 
-                    {/* Animated Hand Cursor */}
-                    {isSimulating && (
-                      <motion.div
-                        className="absolute w-10 h-10 pointer-events-none"
-                        animate={handControls}
-                        initial={{ x: 0, y: 0 }}
-                      >
-                        <div className="relative">
-                          <Hand className="text-primary" size={24} />
-                          <div className="absolute -inset-1 bg-primary rounded-full opacity-20 animate-pulse" />
-                        </div>
-                      </motion.div>
+                    {!isSimulating && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                        <p className="text-gray-400">Start simulation to see gesture tracking</p>
+                      </div>
                     )}
                   </div>
 
@@ -175,6 +160,20 @@ export default function SoftwarePreview() {
                 </div>
               </div>
             </div>
+
+            {/* Animated Hand Cursor */}
+            {isSimulating && (
+              <motion.div
+                className="absolute w-10 h-10 pointer-events-none"
+                animate={handControls}
+                initial={{ x: 0, y: 0 }}
+              >
+                <div className="relative">
+                  <Hand className="text-primary" size={24} />
+                  <div className="absolute -inset-1 bg-primary rounded-full opacity-20 animate-pulse" />
+                </div>
+              </motion.div>
+            )}
           </motion.div>
 
           <motion.div

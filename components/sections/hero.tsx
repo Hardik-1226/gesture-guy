@@ -2,11 +2,20 @@
 
 import { useRef } from "react"
 import { motion } from "framer-motion"
-import { Canvas } from "@react-three/fiber"
-import { Environment, OrbitControls } from "@react-three/drei"
 import { Button } from "@/components/ui/button"
-import HandModel from "@/components/three-d/hand-model"
-import ParticleBackground from "@/components/three-d/particle-background"
+import Link from "next/link"
+import dynamic from "next/dynamic"
+import { ArrowRight, Laptop } from "lucide-react"
+
+// Dynamically import Three.js components to avoid SSR issues
+const ThreeScene = dynamic(() => import("@/components/three-d/three-scene"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-[500px] flex items-center justify-center">
+      <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  ),
+})
 
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -22,12 +31,8 @@ export default function Hero() {
     >
       <div className="absolute inset-0 grid-pattern opacity-30" />
 
-      {/* Particle background with reduced particle count for better performance */}
-      <div className="absolute inset-0 z-0">
-        <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
-          <ParticleBackground count={500} />
-        </Canvas>
-      </div>
+      {/* Enhanced background with gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-background via-background/90 to-background/80" />
 
       <div className="container mx-auto px-4 z-20 flex flex-col lg:flex-row items-center justify-between gap-12 relative">
         <div className="flex-1">
@@ -54,9 +59,21 @@ export default function Hero() {
               transition={{ duration: 0.8, delay: 0.4 }}
               className="flex flex-wrap gap-4"
             >
-              <Button className="bg-primary text-primary-foreground hover:bg-primary/80 glow text-lg py-6 px-8">
-                Try Demo
-              </Button>
+              <Link href="/demo">
+                <Button className="bg-primary text-primary-foreground hover:bg-primary/80 glow text-lg py-6 px-8">
+                  Try Demo
+                </Button>
+              </Link>
+              <a href="http://localhost:5000" target="_blank" rel="noopener noreferrer">
+                <Button
+                  variant="secondary"
+                  className="text-secondary-foreground hover:bg-secondary/80 glow-secondary text-lg py-6 px-8"
+                >
+                  <Laptop className="mr-2" size={20} />
+                  Connect to Backend
+                  <ArrowRight className="ml-2" size={16} />
+                </Button>
+              </a>
               <Button variant="outline" className="border-primary text-primary hover:bg-primary/10 text-lg py-6 px-8">
                 Explore Features
               </Button>
@@ -64,33 +81,14 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        {/* 3D Hand Model with fixed dimensions and position */}
+        {/* Enhanced 3D visualization */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1 }}
           className="flex-1 h-[400px] md:h-[500px] w-full max-w-[500px] relative"
         >
-          <div className="absolute inset-0">
-            <Canvas
-              camera={{ position: [0, 0, 2], fov: 45 }}
-              gl={{ antialias: true, alpha: true }}
-              style={{ background: "transparent" }}
-            >
-              <ambientLight intensity={0.5} />
-              <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
-              <HandModel />
-              <OrbitControls
-                enableZoom={false}
-                enablePan={false}
-                autoRotate
-                autoRotateSpeed={1}
-                maxPolarAngle={Math.PI / 2}
-                minPolarAngle={Math.PI / 2}
-              />
-              <Environment preset="city" />
-            </Canvas>
-          </div>
+          <ThreeScene />
         </motion.div>
       </div>
 

@@ -3,7 +3,6 @@ import type { Metadata } from "next"
 import { Orbitron, Poppins } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
-import Navbar from "@/components/navbar"
 import BackToTop from "@/components/back-to-top"
 
 const orbitron = Orbitron({
@@ -35,7 +34,6 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${orbitron.variable} ${poppins.variable} font-sans bg-[#0A0A0A] text-white`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange>
-          <Navbar />
           {children}
           <BackToTop />
         </ThemeProvider>

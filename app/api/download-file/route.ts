@@ -1,4 +1,11 @@
-import cv2
+import { NextResponse } from "next/server"
+
+export async function GET() {
+  try {
+    // In a real implementation, this would serve the actual Python application file
+    // For this demo, we'll create a simple text file with instructions
+
+    const pythonCode = `import cv2
 import mediapipe as mp
 import pyautogui
 import time
@@ -29,7 +36,6 @@ def detect_gesture(hand_landmarks, hand_label, img):
     middle_tip = hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_TIP]
     thumb_tip = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP]
     pinky_tip = hand_landmarks.landmark[mp_hands.HandLandmark.PINKY_TIP]
-    #pinky_tip = hand_landmarks.landmark[mp_hands.HandLandmark.RING_TIP]
 
     # Current time for gesture breaks
     current_time = time.time()
@@ -138,3 +144,69 @@ while True:
 # Release Resources
 cap.release()
 cv2.destroyAllWindows()
+`
+
+    const readmeContent = `# GestureGuy
+
+A gesture-controlled software interface that allows you to control your computer using hand gestures.
+
+## Requirements
+
+- Python 3.7 or higher
+- OpenCV
+- MediaPipe
+- PyAutoGUI
+
+## Installation
+
+1. Install the required packages:
+   \`\`\`
+   pip install opencv-python mediapipe pyautogui
+   \`\`\`
+
+2. Run the application:
+   \`\`\`
+   python gesture_guy.py
+   \`\`\`
+
+## Gestures
+
+- **Cursor Movement**: Move your middle finger to control the cursor
+- **Click**: Bring your index finger and thumb together
+- **Scroll**: Point your thumb up (scroll up) or down (scroll down)
+- **Volume Control**: Make a V shape with index and middle fingers (up) or fold them (down)
+- **Zoom**: Pinch with thumb and pinky for zoom in/out
+
+## Exit
+
+Press 'q' to exit the application.
+`
+
+    const requirementsContent = `opencv-python>=4.5.0
+mediapipe>=0.8.9
+pyautogui>=0.9.53
+`
+
+    // Create a response with headers for file download
+    const response = new NextResponse(
+      JSON.stringify({
+        pythonCode,
+        readmeContent,
+        requirementsContent,
+        instructions: "Save these files to your computer and follow the instructions in the README.md file.",
+      }),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+          "Content-Disposition": 'attachment; filename="GestureGuy.json"',
+        },
+      },
+    )
+
+    return response
+  } catch (error) {
+    console.error("Error generating download file:", error)
+    return NextResponse.json({ error: "Failed to generate download file" }, { status: 500 })
+  }
+}

@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react"
 import { motion, useScroll, useTransform } from "framer-motion"
-import { Menu, X } from "lucide-react"
+import { Menu, X, Laptop } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -48,7 +49,9 @@ export default function Navbar() {
           transition={{ duration: 0.5 }}
           className="flex items-center"
         >
-          <span className="text-2xl font-bold text-gradient">GestureGuy</span>
+          <Link href="/" className="text-2xl font-bold text-gradient">
+            GestureGuy
+          </Link>
         </motion.div>
 
         <div className="hidden md:flex items-center space-x-8">
@@ -68,8 +71,17 @@ export default function Navbar() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.6 }}
+            className="flex items-center space-x-4"
           >
-            <Button className="bg-primary text-primary-foreground hover:bg-primary/80 glow">Try Demo</Button>
+            <Link href="/demo">
+              <Button className="bg-primary text-primary-foreground hover:bg-primary/80 glow">Try Demo</Button>
+            </Link>
+            <a href="http://localhost:5000" target="_blank" rel="noopener noreferrer">
+              <Button variant="secondary" className="flex items-center">
+                <Laptop className="mr-2" size={16} />
+                Backend
+              </Button>
+            </a>
           </motion.div>
         </div>
 
@@ -117,8 +129,19 @@ export default function Navbar() {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.6 }}
+                className="flex flex-col space-y-4 w-full items-center"
               >
-                <Button className="bg-primary text-primary-foreground hover:bg-primary/80 glow">Try Demo</Button>
+                <Link href="/demo" className="w-3/4">
+                  <Button className="bg-primary text-primary-foreground hover:bg-primary/80 glow w-full">
+                    Try Demo
+                  </Button>
+                </Link>
+                <a href="http://localhost:5000" target="_blank" rel="noopener noreferrer" className="w-3/4">
+                  <Button variant="secondary" className="flex items-center justify-center w-full">
+                    <Laptop className="mr-2" size={16} />
+                    Connect to Backend
+                  </Button>
+                </a>
               </motion.div>
             </div>
           </div>
